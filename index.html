@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>我的乐淘后台管理主页</title>
+    <!-- 1. 引入bootstrap的css文件 -->
+    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
+    <!-- 2. 引入字体图标的css文件 -->
+    <link rel="stylesheet" href="lib/font-awesome/css/font-awesome.css">
+    <!-- 3. 引入登录页面的less文件 -->
+    <link rel="stylesheet/less" href="less/index.less">
+    <!-- 4. 引入less的编译器文件 less.js -->
+    <script src="lib/less/less.js"></script>
+</head>
+
+<body>
+    <main id="main">
+        <div class="row">
+            <div class="col-xs-2">
+                <div class="left">
+                    <div class="logo">
+                        <img src="./images/my_logo.jpg" alt="">
+                        <p>张学友</p>
+                    </div>
+                    <div class="menu">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <a href="index.html">
+                                    用户管理
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <!-- data-toggle="collapse" 表示当前是折叠菜单插件 -->
+                                <!-- href 是控制要切换的元素的id -->
+                                <!-- aria-expanded="true" aria-controls="collapseOne" 盲人设备失败的内容 -->
+                                <!-- 切换的内容只需要指定一个id和  a的href一致即可 -->
+                                <a data-toggle="collapse" href="#collapseOne">分类管理</a>
+                                <ul class="list-group category-children" id="collapseOne">
+                                    <li class="list-group-item"><a href="categoryFirst.html">一级分类</a></li>
+                                    <li class="list-group-item"><a href="cateogorySecond.html">二级分类</a></li>
+                                </ul>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="#">商品管理</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-10">
+                <div class="right">
+                    <header id="header" class="clearfix">
+                        <a href="#" class="pull-left fa fa-navicon">
+                        </a>
+                        <a href="#" class="pull-right fa fa-sign-out"><span>退出</span></a>
+                    </header>
+                    <section id="content">
+                        <div class="info">
+                            <!-- 带边框和鼠标悬停的表格 -->
+                            <table class="table table-bordered table-hover table-user">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>用户名</th>
+                                        <th>电话</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">
+                                            <input type="checkbox">
+                                        </th>
+                                        <td>itcast</td>
+                                        <td>15102324243</td>
+                                        <td>已启用</td>
+                                        <td>
+                                            <button class="btn btn-danger">禁用</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            <input type="checkbox">
+                                        </th>
+                                        <td>itcast</td>
+                                        <td>15102324243</td>
+                                        <td>已禁用</td>
+                                        <td>
+                                            <button class="btn btn-success">启用</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!-- 分页容器 -->
+                            <div class="paging clearfix">
+                               
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- isDelete为0表示已禁用  为1 表示已启用   判断如果为false表示值为0返回后面的已禁用
+                为true表示值为1返回前面的值 已启用 -->
+    <script id="userTmp" type='text/html'>
+        {{each rows as value i}}
+        <tr>
+            <th scope="row">
+                <input type="checkbox">
+            </th>
+            <td>{{value.username}}</td>
+            <td>{{value.mobile}}</td>
+            <!-- <td>{{value.isDelete ? '已启用' : '已禁用'}}</td>
+                <td>{{#value.isDelete ? '<button class="btn btn-danger btn-option" data-is-delete="1">禁用</button>' : '<button data-is-delete="0" class="btn btn-success btn-option">启用</button>'}}</td> -->
+            {{if value.isDelete == 0}}
+            <td>已禁用</td>
+            <td>
+                <button class="btn btn-success btn-option" data-is-delete={{value.isDelete}} data-id="{{value.id}}">启用</button>
+            </td>
+            {{else}}
+            <td>已启用</td>
+            <td>
+                <button class="btn btn-danger btn-option" data-is-delete={{value.isDelete}} data-id="{{value.id}}">禁用</button>
+            </td>
+            {{/if}}
+        </tr>
+        {{/each}}
+    </script>
+   <!--  上一页是要回到当前页的上一页 比如当前是第二页 上一页第一页 page--
+    但是如果page == 1  1--  == 0  页数最少是1 当前页不大于1 就默认为1 如果大于1就使用page--
+    下一页是要跳到当前页面的下一页 比如当前第二个 page++ 第三页
+    但是如果总页面数只有2  判断当前页已经到达了总页码数 跳到当前页 如果小于总页数page++ -->
+    <script id="pagingTmp" type="text/html">
+         <div class="pull-left">
+            显示第 {{page}} 页的 {{pageTotal}} 条记录，总共 {{total}} 条记录
+        </div>
+        <nav class="pull-right">
+            <ul class="pagination">
+                <li>
+                    <a href="#" class="prev" data-page="{{page > 1 ? --page : 1}}">
+                        <span>&laquo;</span>
+                    </a>
+                </li>
+                {{each pageCount as value i}}
+                    <li><a href="#" class="page" data-page="{{value}}">{{value}}</a></li>
+                {{/each}}
+                <li>
+                    <a href="#" class="next" data-page="{{page >= pageCount.length ? pageCount.length : ++page}}">
+                        <span>&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </script>
+    <!-- 5. 引入jquery 因为Bootstrap依赖jquery -->
+    <script src="lib/jquery/jquery.js"></script>
+    <!-- 6. 引入bootstrap js文件 -->
+    <script src="lib/bootstrap/js/bootstrap.js"></script>
+    <!-- 7. 引入模板引擎的js文件 -->
+    <script src="lib/artTemplate/template.js"></script>
+    <!-- 8. 引入登录页面的js文件 -->
+    <script src="js/index.js"></script>
+</body>
+
+</html>
